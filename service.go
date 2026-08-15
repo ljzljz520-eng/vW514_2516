@@ -25,21 +25,10 @@ func (s *Service) Execute(ctx context.Context, req RouteRequest) (RoutePlan, err
 	if err != nil {
 		return RoutePlan{}, err
 	}
-	err = s.store.Save(ctx, plan)
-	if err != nil {
-		err = validateSavedPlan(plan)
-	}
-	if err != nil {
+	if err := s.store.Save(ctx, plan); err != nil {
 		return RoutePlan{}, err
 	}
 	return plan, nil
-}
-
-func validateSavedPlan(plan RoutePlan) error {
-	if len(plan.Stops) < 3 || len(plan.Legs) == 0 || plan.TotalDistanceMeters <= 0 {
-		return fmt.Errorf("%w: saved plan is incomplete", ErrInvalidRequest)
-	}
-	return nil
 }
 
 type AdminService struct {
