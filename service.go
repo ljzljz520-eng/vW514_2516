@@ -25,11 +25,10 @@ func (s *Service) Execute(ctx context.Context, req RouteRequest) (RoutePlan, err
 	if err != nil {
 		return RoutePlan{}, err
 	}
-	err = s.store.Save(ctx, plan)
-	if err != nil {
-		err = validateSavedPlan(plan)
+	if err := validateSavedPlan(plan); err != nil {
+		return RoutePlan{}, err
 	}
-	if err != nil {
+	if err := s.store.Save(ctx, plan); err != nil {
 		return RoutePlan{}, err
 	}
 	return plan, nil
